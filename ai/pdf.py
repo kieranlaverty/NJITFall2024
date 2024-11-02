@@ -20,7 +20,7 @@ def index(data, name):
 
     return index
 
-pdf_path = os.path.join("data","DeepDiveIntoDeepLearning.pdf")
+#pdf_path = os.path.join("data","DeepDiveIntoDeepLearning.pdf")
 book_pdf = PDFReader().load_data(file="NJITFall2024\data\DeepDiveIntoDeepLearning.pdf")
 book_index = index(book_pdf, "Deep Dive Into Deep Learning")
 book_engine = book_index.as_query_engine()

@@ -20,7 +20,7 @@ tools = [
     QueryEngineTool(
         query_engine=book_engine,
         metadata=ToolMetadata(
-            name="Deep Learning",
+            name="Deep Dive Into Deep Learning",
             description="this gives detailed information about Deep Learning",
         ),
     ),
