@@ -3,9 +3,6 @@ from llama_index.core import StorageContext, VectorStoreIndex, load_index_from_s
 from llama_index.readers.file import PDFReader
 
 
-
-
-
 def index(data, name):
     index = None
     if not os.path.exists(name):
@@ -21,6 +18,7 @@ def index(data, name):
     return index
 
 #pdf_path = os.path.join("data","DeepDiveIntoDeepLearning.pdf")
-book_pdf = PDFReader().load_data(file="NJITFall2024\data\DeepDiveIntoDeepLearning.pdf")
-book_index = index(book_pdf, "Deep Dive Into Deep Learning")
-book_engine = book_index.as_query_engine()
+book_pdf = PDFReader().load_data(file="data\DeepDiveIntoDeepLearning.pdf")
+book_index = index(book_pdf, "Deep")
+book_engine = book_index.as_query_engine(similarity_top_k=3)
+

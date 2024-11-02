@@ -22,4 +22,4 @@ new_prompt = PromptTemplate(
 )
 
 context = """Purpose: The primary role of this agent is to assist users by providing accurate 
-            notes for a student using their textbook and class notes"""
+            information based on the Deep vector data"""
