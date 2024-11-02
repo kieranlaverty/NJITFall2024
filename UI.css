@@ -1,0 +1,108 @@
+body {
+    background-image: url("Industrialbackground.jpg");
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    margin: 0; 
+    height: 100vh; /* Full height */
+    color: #ffffff; 
+}
+
+/* Ensure the main container uses full height */
+.stApp {
+    background-color: transparent;
+    min-height: 100vh;
+    display: flex; /* Use flexbox to manage layout */
+    flex-direction: column; /* Stack items vertically */
+}
+
+
+.streamlit-expanderHeader {
+    color: hsl(24, 50%, 33%); /* Change header color */
+}
+
+/* Style for the file uploader */
+.stFileUploader {
+    width: 70%; /* Adjust width as needed */
+    max-width: 600px;
+    margin: 0 auto; 
+    border-radius: 5px; 
+    padding: 10px; 
+    background-color:  hsl(39, 81%, 46%);;
+    text-align: center; /* Center text within the uploader */
+    cursor: pointer; /* Change cursor on hover */
+}
+
+/* Style the file uploader button */
+.stFileUploader button {
+    background-color: #cc9f0c; /* Button background color */
+    color: white; /* Button text color */
+    border: none; 
+    border-radius: 5px; 
+    padding: 10px 20px; /* Padding for button */
+    transition: background-color 0.3s; 
+}
+
+.stFileUploader button:hover {
+    background-color: #1a5276; /* Darker shade on hover */
+}
+
+/* Title styles */
+h1 {
+    font-size: 2.5em;
+    color: hsl(39, 81%, 46%); 
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* General text styles */
+.stMarkdown {
+    font-size: 1.2em; /* Adjust font size as needed */
+    color: #afc019; 
+    margin-bottom: 20px; 
+    text-align: center;
+    
+}
+
+
+/* Chat history header styles */
+.sidebar .sidebar-header {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+
+.stButton {
+    background-color: #cf881d; /* Button background color */
+    color: white; /* Button text color */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 1em; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.stButton:hover {
+    background-color: #694010;
+}
+
+
+/* Input box styles */
+.stTextInput {
+    width: 70%;
+    max-width: 600px; 
+    margin: 0 auto; 
+    border-radius: 5px;
+}
+
+/* Message styles */
+.user-message, .bot-message {
+    background-color: #ffffff; 
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+    max-width: 70%;
+
+}
+
