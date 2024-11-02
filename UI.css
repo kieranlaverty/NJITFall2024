@@ -1,0 +1,71 @@
+body {
+    background-color: #88803c; /* Overall background color */
+    margin: 0; /* Remove default margins */
+    height: 100vh; /* Full height */
+}
+
+.streamlit-expanderHeader {
+    color: hsl(24, 50%, 33%); /* Change header color */
+}
+
+
+/* Title styles */
+h1 {
+    font-size: 2.5em;
+    color: #1629d6; /* Dark blue */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar .sidebar{
+    color: #ecf0f1;
+}
+/* Chat history header styles */
+.sidebar .sidebar-header {
+    font-size: 1.5em;
+    color: #2980b9; /* Bright blue */
+    margin-bottom: 15px;
+}
+
+
+.stButton {
+    background-color: #2980b9; /* Button background color */
+    color: white; /* Button text color */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 1em; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.stButton:hover {
+    background-color: #1a5276; /* Darker shade on hover */
+}
+
+
+/* Input box styles */
+.stTextInput {
+    width: 100%; /* Full width */
+    max-width: 600px; /* Maximum width */
+    margin: 0 auto; /* Center the input box */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Padding inside the box */
+}
+
+/* Message styles */
+.user-message, .bot-message {
+    background-color: #ffffff; /* Light gray */
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+    max-width: 60%;
+
+}
+
+
+/* Ensure the main container uses full height */
+.stApp {
+    background-color: transparent;
+    height: 100%;
+}
