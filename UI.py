@@ -7,7 +7,7 @@ def load_css():
 
 load_css()
 
-
+st.markdown()
 st.title("\t\tStudy Buddy")
 st.write("An application that can upload your textbooks and find your information\n")
 st.write("I can help you study and learn in no time")
@@ -37,6 +37,8 @@ if st.session_state.messages:
 
 # Function to generate a response (you can customize this)
 def generate_response(user_input):
+
+
     # Simple keyword-based responses
     if "hello" in user_input.lower():
         return "Hi there! How can help you study today?"
@@ -50,8 +52,8 @@ def generate_response(user_input):
 # Display the chat history
 for message in st.session_state.messages:
     if message['role'] == 'user':
-        st.write(f"You: {message['content']}")
-        st.markdown(f"<div class='user-message'>You: {message['content']}</div>", unsafe_allow_html=True)
+        st.write(f"Student: {message['content']}")
+        st.markdown(f"<div class='user-message'>Student: {message['content']}</div>", unsafe_allow_html=True)
 
     else:
         st.write(f"Study Buddy: {message['content']}")
@@ -60,7 +62,7 @@ for message in st.session_state.messages:
 
 
 # User input
-user_input = st.text_input("You:", "")
+user_input = st.text_input("Student:", "")
 # Process user input
 if st.button("Send"):
     if user_input:
