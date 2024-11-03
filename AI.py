@@ -1,16 +1,16 @@
-from dotenv import load_dotenv
+"""from dotenv import load_dotenv
 import os
 
 from llama_index.llms.openai import OpenAI
 
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 
+from llama_index.core.tools import BaseTool, FunctionTool
 from llama_index.core.agent import ReActAgent
 
 from ai.pdf import book_engine
-from ai.prompt import context
+from ai.prompt import new_prompt, instruction_str, context
 from ai.note_engine import note_engine
-from ai.summarizer import summary_engine
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -20,15 +20,13 @@ client = OpenAI(
 
 tools = [
     note_engine,
-    summary_engine,
     QueryEngineTool(
         query_engine=book_engine,
         metadata=ToolMetadata(
             name="Deep",
             description="This gives detailed information about Deep Learning",
         ),
-    ),
-
+    )
 ]
 
 llm =  OpenAI(
@@ -43,3 +41,4 @@ while (prompt := input("Enter a prompt (q to quit): ")) != "q":
     result = agent.query(prompt)
     print(result)
 
+"""

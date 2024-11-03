@@ -1,4 +1,4 @@
-from dotenv import load_dotenv
+"""from dotenv import load_dotenv
 import os
 
 from llama_index.llms.openai import OpenAI
@@ -52,3 +52,4 @@ def chatting():
         yield result
     return
 
+"""
