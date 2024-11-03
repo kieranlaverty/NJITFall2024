@@ -1,7 +1,6 @@
 import streamlit as st
 import PyPDF2
 import os
-import time
 from transformers import pipeline
 from llama_index.core.tools import FunctionTool
 from llama_index.core import StorageContext, VectorStoreIndex, load_index_from_storage
@@ -13,6 +12,7 @@ from llama_index.core.agent import ReActAgent
 from llama_index.core import Document
 from ai.note_engine import note_engine
 from ai.prompt import context
+import shutil
 
 # Load environment variables
 load_dotenv()
@@ -28,7 +28,7 @@ def process_pdf(file_path):
         pdf_reader = PyPDF2.PdfReader(file)
         text = ""
         for page in pdf_reader.pages:
-            text += page.extract_text() + "\n"  # Append each page's text
+            text += page.extract_text() + "\n"  
     return text
 
 # Function to index the PDF
@@ -43,26 +43,23 @@ def index(pdf_text, index_name):
         index = load_index_from_storage(StorageContext.from_defaults(persist_dir=index_name))
     return index
 
-def summary(text):
-    summarizer = pipeline("summarization", model="microsoft/phi-3.5-mini-instruct")
-    summary = summarizer(text)
-    return summary[0]['summary_text']
+# Function to display notes in the sidebar
+def display_notes():
+    notes_file = os.path.join("data", "notes.txt")
+    st.sidebar.header("Notes:")
+    
+    if os.path.exists(notes_file):
+        with open(notes_file, "r") as f:
+            notes = f.readlines()
 
-# Function to save notes to a text file
-def save_note(note):
-    note_file = os.path.join("data", "notes.txt")
-    if not os.path.exists(note_file):
-        open(note_file, "w").close()
+        for note in notes:
+            st.sidebar.write(note.strip())
 
-    with open(note_file, "a") as f:
-        f.write(note + "\n")
+        with open(notes_file, "rb") as f:
+            st.sidebar.download_button("Download Notes", f, file_name="notes.txt", mime="text/plain")
+    else:
+        st.sidebar.write("No notes available.")
 
-    return "Note saved."
-
-# Chatting function to get responses from the AI model
-def chatting(agent, user_input):
-    response = agent.query(user_input)
-    return response
 
 # Function to display chat messages
 def display_chat_history():
@@ -78,35 +75,40 @@ def main():
     st.write("An application that can upload your textbooks and find your information.")
     st.write("I can help you study and learn in no time.")
 
-    # Ensure 'data' directory exists
     os.makedirs("data", exist_ok=True)
 
-    # Upload PDF file
+
+    # Sidebar for notes and clear history button
+    st.sidebar.header("Clear History")
+    if st.sidebar.button("Clear History"):
+        st.session_state.clear()  
+        st.session_state.pdf_ready = False 
+        
+        # Remove the uploaded PDF file
+        for file in os.listdir("data"):
+            file_path = os.path.join("data", file)
+            os.remove(file_path)
+        
+        # Delete jason parsing 
+        index_dir = "Deep"
+        if os.path.exists(index_dir):
+            shutil.rmtree(index_dir)
+ 
+
     pdf_file = st.file_uploader("Upload a PDF File of your Textbook (up to 5 GB)", type=["pdf"])
 
-    summary_engine = FunctionTool.from_defaults(fn=summary, name="summarizer", description="This tool can summarize text.")
-    # Generate summary using the summary tool
-
-    with st.sidebar:
-        st.header("Summary of the Repsonse:")
-        if 'summary_text' in st.session_state:
-            st.write(st.session_state.summary_text)
-        else:
-            st.write("No summary available. Please upload a PDF and generate a summary.")
-   
+    # Check if a PDF file has been uploaded
     if pdf_file is not None:
-        # Save the uploaded PDF file to the 'data' directory
         saved_pdf_path = os.path.join("data", pdf_file.name)
         with open(saved_pdf_path, "wb") as f:
-            f.write(pdf_file.getbuffer())  # Save the uploaded file to the path
+            f.write(pdf_file.getbuffer())
 
         st.write(f"Uploaded File Name: {pdf_file.name}")
 
-        # Process the PDF and display a loading message
-        with st.spinner("Processing and indexing PDF..."):
-            pdf_text = process_pdf(saved_pdf_path)  # Process the PDF from the saved path
-            book_index = index(pdf_text, "Deep")  # Index the PDF text
-            book_engine = book_index.as_query_engine(similarity_top_k=3)  # Create query engine
+        with st.spinner("Processing..."):
+            pdf_text = process_pdf(saved_pdf_path)
+            book_index = index(pdf_text, "Deep")
+            book_engine = book_index.as_query_engine(similarity_top_k=3)
             llm = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-3.5-turbo")
             tools = [
                 note_engine,
@@ -120,46 +122,27 @@ def main():
             ]
             agent = ReActAgent.from_tools(tools, llm=llm, verbose=True, context=context)
 
-            st.session_state.agent = agent  # Store agent in session state
-            st.session_state.pdf_readsy = True  # Set to True after indexing completes
-            
-            # Success message
-            success_placeholder = st.empty()
-            success_placeholder.success("PDF processed and indexed successfully!")
-            time.sleep(5)  # Show the message for a short time
-            success_placeholder.empty()
+            st.session_state.agent = agent
+            st.session_state.pdf_ready = True  
 
-        # Display saved notes
-        notes_file = os.path.join("data", "notes.txt")
-        if os.path.exists(notes_file):
-            with open(notes_file, "r") as f:
-                notes = f.readlines()
-            st.header("Notes:")
-            for note in notes:
-                st.write(note.strip())
-            
-            # Button to download notes
-            with open(notes_file, "rb") as f:
-                st.download_button("Download Notes", f, file_name="notes.txt", mime="text/plain")
-        else:
-            st.write("No notes available.")
-    # Only allow chat if the PDF has been processed
+    # Check if the PDF has been processed
     if st.session_state.get("pdf_ready", False):
-        # Initialize chat history
         if 'messages' not in st.session_state:
             st.session_state.messages = []
 
-        # User input for chat
         user_input = st.text_input("Ask a question about your textbook:", "")
-        if st.button("Submit"):
-            if user_input:
-                st.session_state.messages.append({'role': 'user', 'content': user_input})
-                bot_response = agent.query(user_input) 
-                st.session_state.messages.append({'role': 'bot', 'content': bot_response})
+        if user_input:
+            st.session_state.messages.append({'role': 'user', 'content': user_input})
+            bot_response = st.session_state.agent.query(user_input)
+            st.session_state.messages.append({'role': 'bot', 'content': bot_response})
 
-        
-        # Display chat history
-        display_chat_history()
+            # Display the bot's response immediately
+            display_chat_history()
+
+            # Save the note using the note_engine and update the notes display
+            summary_text = f"Q: {user_input}\nA: {bot_response}"
+            note_engine.call(summary_text)  
+            display_notes()  
 
     else:
         st.warning("Please upload a PDF file to enable the chat feature and view the content.")

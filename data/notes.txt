@@ -1,3 +1,0 @@
-Transformers are used in Language Models (LLMs)
-A Multilayer Perceptron (MLP) is a class of feedforward artificial neural network. It consists of at least three layers of nodes: an input layer, a hidden layer, and an output layer.
-
