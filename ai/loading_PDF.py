@@ -20,6 +20,4 @@ def index(data, name):
 
 def pdf_loading_engine(pdf_address, title):
     book_index = index(pdf_address, title)
-    engine = book_index.as_query_engine(similarity_top_k=3)
-
-    return engine
+    return book_index

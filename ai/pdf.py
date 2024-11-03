@@ -21,7 +21,4 @@ def index(data, name):
 #pdf_path = os.path.join("data","DeepDiveIntoDeepLearning.pdf")
 book_pdf = PDFReader().load_data(file="data\DeepDiveIntoDeepLearning.pdf")
 book_index = index(book_pdf, "Deep")
-
-book_pdf = PDFReader().load_data(file="data\DSM-5.pdf")
-book_index = index(book_pdf, "Deep")
 book_engine = book_index.as_query_engine(similarity_top_k=3)
