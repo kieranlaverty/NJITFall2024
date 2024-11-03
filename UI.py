@@ -88,11 +88,12 @@ def main():
         for file in os.listdir("data"):
             file_path = os.path.join("data", file)
             os.remove(file_path)
-        
         # Delete jason parsing 
         index_dir = "Deep"
         if os.path.exists(index_dir):
             shutil.rmtree(index_dir)
+        
+        st.experimental_rerun() 
  
 
     pdf_file = st.file_uploader("Upload a PDF File of your Textbook (up to 5 GB)", type=["pdf"])
@@ -125,24 +126,28 @@ def main():
             st.session_state.agent = agent
             st.session_state.pdf_ready = True  
 
-    # Check if the PDF has been processed
+        # Check if the PDF has been processed
     if st.session_state.get("pdf_ready", False):
         if 'messages' not in st.session_state:
             st.session_state.messages = []
 
-        user_input = st.text_input("Ask a question about your textbook:", "")
-        if user_input:
-            st.session_state.messages.append({'role': 'user', 'content': user_input})
-            bot_response = st.session_state.agent.query(user_input)
-            st.session_state.messages.append({'role': 'bot', 'content': bot_response})
+        user_input = st.text_input("Ask a question about your textbook:", "", key="user_input")  # Use a key for session state
+        submit_button = st.button("Submit")  # Add a submit button
 
-            # Display the bot's response immediately
-            display_chat_history()
+        # Check if the submit button is clicked or user pressed Enter
+        if submit_button or st.session_state.user_input:
+            if user_input:  # Only process if user input is not empty
+                st.session_state.messages.append({'role': 'user', 'content': user_input})
+                bot_response = st.session_state.agent.query(user_input)
+                st.session_state.messages.append({'role': 'bot', 'content': bot_response})
 
-            # Save the note using the note_engine and update the notes display
-            summary_text = f"Q: {user_input}\nA: {bot_response}"
-            note_engine.call(summary_text)  
-            display_notes()  
+                # Display the bot's response immediately
+                display_chat_history()
+
+                # Save the note using the note_engine and update the notes display
+                summary_text = f"Q: {user_input}\nA: {bot_response}"
+                note_engine.call(summary_text)  
+                display_notes() 
 
     else:
         st.warning("Please upload a PDF file to enable the chat feature and view the content.")
