@@ -13,7 +13,7 @@ body {
 }
 
 .streamlit-expanderHeader {
-    color: #1cb3e0; /* Primary color */
+    color: #1a82a1; /* Primary color */
 }
 
 .stFileUploader {
@@ -28,7 +28,7 @@ body {
 }
 
 .stFileUploader button {
-    background-color: #1cb3e0; /* Primary color */
+    background-color: #1a82a1; /* Primary color */
     color: #ffffff; 
     border: none; 
     border-radius: 5px; 
@@ -82,9 +82,10 @@ h1 {
 }
 
 .user-message, .bot-message {
-    background-color: #ffffff; 
+    background-color: #1a82a1;
     padding: 10px;
     border-radius: 5px;
-    margin: 5px 0;
+    margin: 0 auto; 
     max-width: 85%;
+    width: 70%;
 }
