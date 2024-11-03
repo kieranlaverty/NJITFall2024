@@ -2,6 +2,8 @@ import streamlit as st
 import PyPDF2
 import os
 import time
+from transformers import pipeline
+from llama_index.core.tools import FunctionTool
 from llama_index.core import StorageContext, VectorStoreIndex, load_index_from_storage
 from llama_index.readers.file import PDFReader
 from dotenv import load_dotenv
@@ -41,6 +43,22 @@ def index(pdf_text, index_name):
         index = load_index_from_storage(StorageContext.from_defaults(persist_dir=index_name))
     return index
 
+def summary(text):
+    summarizer = pipeline("summarization", model="microsoft/phi-3.5-mini-instruct")
+    summary = summarizer(text)
+    return summary[0]['summary_text']
+
+# Function to save notes to a text file
+def save_note(note):
+    note_file = os.path.join("data", "notes.txt")
+    if not os.path.exists(note_file):
+        open(note_file, "w").close()
+
+    with open(note_file, "a") as f:
+        f.write(note + "\n")
+
+    return "Note saved."
+
 # Chatting function to get responses from the AI model
 def chatting(agent, user_input):
     response = agent.query(user_input)
@@ -66,6 +84,16 @@ def main():
     # Upload PDF file
     pdf_file = st.file_uploader("Upload a PDF File of your Textbook (up to 5 GB)", type=["pdf"])
 
+    summary_engine = FunctionTool.from_defaults(fn=summary, name="summarizer", description="This tool can summarize text.")
+    # Generate summary using the summary tool
+
+    with st.sidebar:
+        st.header("Summary of the Repsonse:")
+        if 'summary_text' in st.session_state:
+            st.write(st.session_state.summary_text)
+        else:
+            st.write("No summary available. Please upload a PDF and generate a summary.")
+   
     if pdf_file is not None:
         # Save the uploaded PDF file to the 'data' directory
         saved_pdf_path = os.path.join("data", pdf_file.name)
@@ -85,7 +113,7 @@ def main():
                 QueryEngineTool(
                     query_engine=book_engine,
                     metadata=ToolMetadata(
-                        name="Deep",
+                        name="tool",
                         description="This gives detailed information about Deep Learning",
                     ),
                 ),
@@ -93,7 +121,7 @@ def main():
             agent = ReActAgent.from_tools(tools, llm=llm, verbose=True, context=context)
 
             st.session_state.agent = agent  # Store agent in session state
-            st.session_state.pdf_ready = True  # Set to True after indexing completes
+            st.session_state.pdf_readsy = True  # Set to True after indexing completes
             
             # Success message
             success_placeholder = st.empty()
@@ -101,6 +129,20 @@ def main():
             time.sleep(5)  # Show the message for a short time
             success_placeholder.empty()
 
+        # Display saved notes
+        notes_file = os.path.join("data", "notes.txt")
+        if os.path.exists(notes_file):
+            with open(notes_file, "r") as f:
+                notes = f.readlines()
+            st.header("Notes:")
+            for note in notes:
+                st.write(note.strip())
+            
+            # Button to download notes
+            with open(notes_file, "rb") as f:
+                st.download_button("Download Notes", f, file_name="notes.txt", mime="text/plain")
+        else:
+            st.write("No notes available.")
     # Only allow chat if the PDF has been processed
     if st.session_state.get("pdf_ready", False):
         # Initialize chat history
@@ -115,6 +157,7 @@ def main():
                 bot_response = agent.query(user_input) 
                 st.session_state.messages.append({'role': 'bot', 'content': bot_response})
 
+        
         # Display chat history
         display_chat_history()
 

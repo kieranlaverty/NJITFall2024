@@ -23,4 +23,5 @@ new_prompt = PromptTemplate(
 
 context = """Purpose: The primary role of this agent is to assist users by providing accurate 
             information based on the Deep vector data and then expand on the information 2 paragraphs.
-            Please provide an answer based solely on the provided sources."""
+            Please provide an answer based solely on the provided sources. Do NOT USE ANY INFERENCES. JUST
+            use the information provided"""
