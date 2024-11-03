@@ -10,6 +10,7 @@ from llama_index.core.agent import ReActAgent
 from ai.pdf import book_engine
 from ai.prompt import context
 from ai.note_engine import note_engine
+from ai.summarizer import summary_engine
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -19,6 +20,7 @@ client = OpenAI(
 
 tools = [
     note_engine,
+    summary_engine,
     QueryEngineTool(
         query_engine=book_engine,
         metadata=ToolMetadata(
